@@ -29,7 +29,6 @@ open Fracture
 open Fracture.Common
 open Fracture.Pipelets
 open HttpMachine
-open Owin
 
 [<Sealed>]
 type HttpServer(app) =

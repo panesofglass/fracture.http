@@ -24,7 +24,7 @@ open System.Text
 open System.Threading
 open Fracture
 open HttpMachine
-open Owin
+open Dyfrig
 
 /// An Environment dictionary to store OWIN request and response values.
 type internal ServerEnvironment() as x =
@@ -38,37 +38,6 @@ type internal ServerEnvironment() as x =
     do x.Add(Constants.callCancelled, cts.Token)
 
     do x.Add(Constants.owinVersion, "1.0")
-
-    (* Set request defaults *)
-
-    // Add the request headers dictionary
-    let requestHeaders = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
-    do x.Add(Constants.requestHeaders, requestHeaders)
-
-    let requestBody = new IO.MemoryStream()
-    do x.Add(Constants.requestBody, requestBody)
-
-    (* Set response defaults *)
-    do x.Add(Constants.responseStatusCode, 404)
-
-    // Add the response headers dictionary
-    let responseHeaders = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
-    do x.Add(Constants.responseHeaders, responseHeaders)
-
-    let responseBody = new IO.MemoryStream()
-    do x.Add(Constants.responseBody, responseBody)
-
-    /// Gets the request headers dictionary for the current request.
-    override x.RequestHeaders = requestHeaders :> _
-
-    /// Gets the request body for the current request.
-    override x.RequestBody = requestBody :> _
-
-    /// Gets the response headers dictionary for the current response.
-    override x.ResponseHeaders = responseHeaders :> _
-
-    /// Gets the response body stream.
-    override x.ResponseBody = responseBody :> _
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Response =
@@ -199,27 +168,27 @@ type ParserDelegate(app, send) as p =
 
         member this.OnMethod( parser, m) = 
             this.httpMethod <- m
-            this.env.Add(Owin.Constants.requestMethod, m)
+            this.env.Add(Constants.requestMethod, m)
 
         member this.OnRequestUri(_, requestUri) = 
             let uri = Uri(requestUri, UriKind.RelativeOrAbsolute)
             this.env.Add("fracture.RequestUri", uri)
 
             // TODO: Fix this so that the path can be determined correctly.
-            this.env.Add(Owin.Constants.requestPathBase, "")
+            this.env.Add(Constants.requestPathBase, "")
 
             if uri.IsAbsoluteUri then
-                this.env.Add(Owin.Constants.requestPath, uri.AbsolutePath)
-                this.env.Add(Owin.Constants.requestScheme, uri.Scheme)
+                this.env.Add(Constants.requestPath, uri.AbsolutePath)
+                this.env.Add(Constants.requestScheme, uri.Scheme)
                 this.env.RequestHeaders.Add("Host", [|uri.Host|])
             else
-                this.env.Add(Owin.Constants.requestPath, requestUri)
+                this.env.Add(Constants.requestPath, requestUri)
 
         member this.OnFragment(_, fragment) = 
             this.env.Add("fracture.RequestFragment", fragment)
 
         member this.OnQueryString(_, queryString) = 
-            this.env.Add(Owin.Constants.requestQueryString, queryString)
+            this.env.Add(Constants.requestQueryString, queryString)
 
         member this.OnHeaderName(_, name) = 
             if not (String.IsNullOrEmpty(this.headerValue)) then

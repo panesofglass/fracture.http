@@ -102,6 +102,7 @@ Target "CreateNuGet" (fun _ ->
         |> CopyTo nugetLib
 
     let httpMachineVersion = GetPackageVersion packagesDir "HttpMachine"
+    let dyfrigVersion = GetPackageVersion packagesDir "Dyfrig"
     let fractureVersion = GetPackageVersion packagesDir "Fracture"
 
     NuGet (fun p -> 
@@ -113,6 +114,7 @@ Target "CreateNuGet" (fun _ ->
                 OutputPath = nugetDir
                 ToolPath = nugetPath
                 Dependencies = ["Fracture", fractureVersion
+                                "Dyfrig", dyfrigVersion
                                 "HttpMachine", httpMachineVersion]
                 AccessKey = getBuildParamOrDefault "nugetkey" ""
                 Publish = hasBuildParam "nugetKey" })

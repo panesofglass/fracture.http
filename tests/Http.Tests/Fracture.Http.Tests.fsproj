@@ -35,6 +35,10 @@
   <Import Project="..\..\lib\FSharp\v4.0\bin\Microsoft.FSharp.Targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <ItemGroup>
+    <Reference Include="Dyfrig">
+      <HintPath>..\..\packages\Dyfrig.0.1.131128.4\lib\net40\Dyfrig.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Fracture">
       <HintPath>..\..\packages\Fracture.0.9.2\lib\net40\Fracture.dll</HintPath>
       <Private>True</Private>
